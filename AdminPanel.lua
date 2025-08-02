@@ -1,6 +1,6 @@
--- ULTIMATE ADMIN PANEL
+-- ULTIMATE FUTURISTIC ADMIN PANEL V2.0
 -- Press F2 to open/close
--- Created for advanced server administration
+-- Created for advanced server administration with stunning visuals
 
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -11,6 +11,7 @@ local Workspace = game:GetService("Workspace")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local HttpService = game:GetService("HttpService")
+local Debris = game:GetService("Debris")
 
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
@@ -23,10 +24,15 @@ local ADMIN_LIST = {
 
 local MUSIC_IDS = {
     ["Chill Vibes"] = "rbxassetid://1841647093",
-    ["Epic Battle"] = "rbxassetid://1837879082",
+    ["Epic Battle"] = "rbxassetid://1837879082", 
     ["Dance Party"] = "rbxassetid://1845756489",
     ["Relaxing"] = "rbxassetid://1838819154",
-    ["Intense"] = "rbxassetid://1847115477"
+    ["Intense"] = "rbxassetid://1847115477",
+    ["Synthwave"] = "rbxassetid://142376088",
+    ["Cyberpunk"] = "rbxassetid://1848354536",
+    ["Future Bass"] = "rbxassetid://1846431449",
+    ["Ambient Space"] = "rbxassetid://1845554017",
+    ["Neon Dreams"] = "rbxassetid://1847269395"
 }
 
 local DANCE_ANIMATIONS = {
@@ -34,7 +40,10 @@ local DANCE_ANIMATIONS = {
     "rbxassetid://507770818", -- Dance 2
     "rbxassetid://507771019", -- Dance 3
     "rbxassetid://507771955", -- Dance 4
-    "rbxassetid://507772104"  -- Dance 5
+    "rbxassetid://507772104", -- Dance 5
+    "rbxassetid://507777623", -- Dance 6
+    "rbxassetid://507777268", -- Dance 7
+    "rbxassetid://507776879"  -- Dance 8
 }
 
 -- Check if player is admin
@@ -46,256 +55,467 @@ if not isAdmin(LocalPlayer) then
     return -- Exit if not admin
 end
 
--- Create main GUI
+-- Create main GUI with fullscreen design
 local AdminGui = Instance.new("ScreenGui")
-AdminGui.Name = "AdminPanel"
+AdminGui.Name = "UltimateFuturisticAdminPanel"
 AdminGui.Parent = PlayerGui
 AdminGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+AdminGui.ResetOnSpawn = false
 
--- Main Frame
-local MainFrame = Instance.new("Frame")
-MainFrame.Name = "MainFrame"
-MainFrame.Parent = AdminGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-MainFrame.BorderSizePixel = 0
-MainFrame.Position = UDim2.new(0.5, -300, 0.5, -250)
-MainFrame.Size = UDim2.new(0, 600, 0, 500)
-MainFrame.Visible = false
+-- Fullscreen Background with animated gradient
+local BackgroundFrame = Instance.new("Frame")
+BackgroundFrame.Name = "BackgroundFrame"
+BackgroundFrame.Parent = AdminGui
+BackgroundFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BackgroundFrame.BorderSizePixel = 0
+BackgroundFrame.Size = UDim2.new(1, 0, 1, 0)
+BackgroundFrame.Visible = false
 
--- Add corner radius
-local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
-MainCorner.Parent = MainFrame
-
--- Add gradient background
-local Gradient = Instance.new("UIGradient")
-Gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(30, 30, 40)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(15, 15, 20))
+-- Animated background gradient
+local BackgroundGradient = Instance.new("UIGradient")
+BackgroundGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 10, 30)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(30, 10, 50)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(10, 30, 60))
 }
-Gradient.Rotation = 45
-Gradient.Parent = MainFrame
+BackgroundGradient.Rotation = 45
+BackgroundGradient.Parent = BackgroundFrame
 
--- Title Bar
-local TitleBar = Instance.new("Frame")
-TitleBar.Name = "TitleBar"
-TitleBar.Parent = MainFrame
-TitleBar.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-TitleBar.BorderSizePixel = 0
-TitleBar.Size = UDim2.new(1, 0, 0, 40)
+-- Animated particles background
+local ParticlesFrame = Instance.new("Frame")
+ParticlesFrame.Name = "ParticlesFrame"
+ParticlesFrame.Parent = BackgroundFrame
+ParticlesFrame.BackgroundTransparency = 1
+ParticlesFrame.Size = UDim2.new(1, 0, 1, 0)
 
-local TitleCorner = Instance.new("UICorner")
-TitleCorner.CornerRadius = UDim.new(0, 12)
-TitleCorner.Parent = TitleBar
+-- Create floating particles
+local function createParticle()
+    local particle = Instance.new("Frame")
+    particle.Name = "Particle"
+    particle.Parent = ParticlesFrame
+    particle.BackgroundColor3 = Color3.fromHSV(math.random(), 0.8, 1)
+    particle.BorderSizePixel = 0
+    particle.Size = UDim2.new(0, math.random(2, 6), 0, math.random(2, 6))
+    particle.Position = UDim2.new(math.random(), 0, 1.1, 0)
+    
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(1, 0)
+    corner.Parent = particle
+    
+    -- Animate particle movement
+    local tween = TweenService:Create(particle,
+        TweenInfo.new(math.random(10, 20), Enum.EasingStyle.Linear),
+        {
+            Position = UDim2.new(math.random(), 0, -0.1, 0),
+            BackgroundTransparency = 1
+        }
+    )
+    tween:Play()
+    
+    tween.Completed:Connect(function()
+        particle:Destroy()
+    end)
+end
 
--- Fix title bar corners
-local TitleFix = Instance.new("Frame")
-TitleFix.Parent = TitleBar
-TitleFix.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-TitleFix.BorderSizePixel = 0
-TitleFix.Position = UDim2.new(0, 0, 0.5, 0)
-TitleFix.Size = UDim2.new(1, 0, 0.5, 0)
+-- Particle spawner
+spawn(function()
+    while true do
+        if BackgroundFrame.Visible then
+            createParticle()
+            wait(0.1)
+        else
+            wait(1)
+        end
+    end
+end)
 
--- Title Text
-local TitleText = Instance.new("TextLabel")
-TitleText.Name = "TitleText"
-TitleText.Parent = TitleBar
-TitleText.BackgroundTransparency = 1
-TitleText.Position = UDim2.new(0, 15, 0, 0)
-TitleText.Size = UDim2.new(1, -60, 1, 0)
-TitleText.Font = Enum.Font.GothamBold
-TitleText.Text = "🛡️ ULTIMATE ADMIN PANEL"
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.TextScaled = true
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
+-- Main glassmorphism container
+local MainContainer = Instance.new("Frame")
+MainContainer.Name = "MainContainer"
+MainContainer.Parent = BackgroundFrame
+MainContainer.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+MainContainer.BackgroundTransparency = 0.9
+MainContainer.BorderSizePixel = 0
+MainContainer.Position = UDim2.new(0.05, 0, 0.05, 0)
+MainContainer.Size = UDim2.new(0.9, 0, 0.9, 0)
 
--- Close Button
+-- Glassmorphism effect
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 20)
+MainCorner.Parent = MainContainer
+
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Color = Color3.fromRGB(100, 200, 255)
+MainStroke.Thickness = 2
+MainStroke.Transparency = 0.5
+MainStroke.Parent = MainContainer
+
+-- Holographic header
+local HeaderFrame = Instance.new("Frame")
+HeaderFrame.Name = "HeaderFrame"
+HeaderFrame.Parent = MainContainer
+HeaderFrame.BackgroundColor3 = Color3.fromRGB(0, 150, 255)
+HeaderFrame.BackgroundTransparency = 0.7
+HeaderFrame.BorderSizePixel = 0
+HeaderFrame.Size = UDim2.new(1, 0, 0, 80)
+
+local HeaderCorner = Instance.new("UICorner")
+HeaderCorner.CornerRadius = UDim.new(0, 20)
+HeaderCorner.Parent = HeaderFrame
+
+local HeaderGradient = Instance.new("UIGradient")
+HeaderGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 200, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 0, 255))
+}
+HeaderGradient.Rotation = 90
+HeaderGradient.Parent = HeaderFrame
+
+-- Animated title with holographic effect
+local TitleLabel = Instance.new("TextLabel")
+TitleLabel.Name = "TitleLabel"
+TitleLabel.Parent = HeaderFrame
+TitleLabel.BackgroundTransparency = 1
+TitleLabel.Position = UDim2.new(0, 30, 0, 0)
+TitleLabel.Size = UDim2.new(1, -120, 1, 0)
+TitleLabel.Font = Enum.Font.SourceSansBold
+TitleLabel.Text = "🌟 ULTIMATE FUTURISTIC ADMIN PANEL 🌟"
+TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleLabel.TextScaled = true
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local TitleStroke = Instance.new("UIStroke")
+TitleStroke.Color = Color3.fromRGB(0, 255, 255)
+TitleStroke.Thickness = 2
+TitleStroke.Parent = TitleLabel
+
+-- Animated close button
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
-CloseButton.Parent = TitleBar
-CloseButton.BackgroundColor3 = Color3.fromRGB(255, 70, 70)
+CloseButton.Parent = HeaderFrame
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+CloseButton.BackgroundTransparency = 0.3
 CloseButton.BorderSizePixel = 0
-CloseButton.Position = UDim2.new(1, -35, 0, 5)
-CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Font = Enum.Font.GothamBold
-CloseButton.Text = "X"
+CloseButton.Position = UDim2.new(1, -70, 0, 15)
+CloseButton.Size = UDim2.new(0, 50, 0, 50)
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.Text = "✕"
 CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseButton.TextScaled = true
 
 local CloseCorner = Instance.new("UICorner")
-CloseCorner.CornerRadius = UDim.new(0, 6)
+CloseCorner.CornerRadius = UDim.new(1, 0)
 CloseCorner.Parent = CloseButton
 
--- Content Frame
-local ContentFrame = Instance.new("Frame")
-ContentFrame.Name = "ContentFrame"
-ContentFrame.Parent = MainFrame
-ContentFrame.BackgroundTransparency = 1
-ContentFrame.Position = UDim2.new(0, 10, 0, 50)
-ContentFrame.Size = UDim2.new(1, -20, 1, -60)
+local CloseStroke = Instance.new("UIStroke")
+CloseStroke.Color = Color3.fromRGB(255, 100, 100)
+CloseStroke.Thickness = 2
+CloseStroke.Parent = CloseButton
 
--- Tabs Container
-local TabsContainer = Instance.new("Frame")
-TabsContainer.Name = "TabsContainer"
-TabsContainer.Parent = ContentFrame
-TabsContainer.BackgroundTransparency = 1
-TabsContainer.Size = UDim2.new(1, 0, 0, 40)
+-- Content container
+local ContentContainer = Instance.new("Frame")
+ContentContainer.Name = "ContentContainer"
+ContentContainer.Parent = MainContainer
+ContentContainer.BackgroundTransparency = 1
+ContentContainer.Position = UDim2.new(0, 20, 0, 100)
+ContentContainer.Size = UDim2.new(1, -40, 1, -120)
 
-local TabsList = Instance.new("UIListLayout")
-TabsList.Parent = TabsContainer
-TabsList.FillDirection = Enum.FillDirection.Horizontal
-TabsList.Padding = UDim.new(0, 5)
+-- Navigation sidebar
+local NavigationFrame = Instance.new("Frame")
+NavigationFrame.Name = "NavigationFrame"
+NavigationFrame.Parent = ContentContainer
+NavigationFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+NavigationFrame.BackgroundTransparency = 0.3
+NavigationFrame.BorderSizePixel = 0
+NavigationFrame.Size = UDim2.new(0, 200, 1, 0)
 
--- Content Pages
+local NavCorner = Instance.new("UICorner")
+NavCorner.CornerRadius = UDim.new(0, 15)
+NavCorner.Parent = NavigationFrame
+
+local NavStroke = Instance.new("UIStroke")
+NavStroke.Color = Color3.fromRGB(0, 255, 150)
+NavStroke.Thickness = 1
+NavStroke.Transparency = 0.5
+NavStroke.Parent = NavigationFrame
+
+local NavigationList = Instance.new("UIListLayout")
+NavigationList.Parent = NavigationFrame
+NavigationList.Padding = UDim.new(0, 5)
+NavigationList.SortOrder = Enum.SortOrder.LayoutOrder
+
+local NavPadding = Instance.new("UIPadding")
+NavPadding.Parent = NavigationFrame
+NavPadding.PaddingTop = UDim.new(0, 15)
+NavPadding.PaddingLeft = UDim.new(0, 15)
+NavPadding.PaddingRight = UDim.new(0, 15)
+NavPadding.PaddingBottom = UDim.new(0, 15)
+
+-- Content pages container
 local PagesContainer = Instance.new("Frame")
 PagesContainer.Name = "PagesContainer"
-PagesContainer.Parent = ContentFrame
+PagesContainer.Parent = ContentContainer
 PagesContainer.BackgroundTransparency = 1
-PagesContainer.Position = UDim2.new(0, 0, 0, 50)
-PagesContainer.Size = UDim2.new(1, 0, 1, -50)
+PagesContainer.Position = UDim2.new(0, 220, 0, 0)
+PagesContainer.Size = UDim2.new(1, -220, 1, 0)
 
--- Tab System
+-- Tab system with enhanced styling
 local currentTab = nil
 local tabs = {}
 
-local function createTab(name, icon)
-    local TabButton = Instance.new("TextButton")
-    TabButton.Name = name .. "Tab"
-    TabButton.Parent = TabsContainer
-    TabButton.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-    TabButton.BorderSizePixel = 0
-    TabButton.Size = UDim2.new(0, 120, 1, 0)
-    TabButton.Font = Enum.Font.Gotham
-    TabButton.Text = icon .. " " .. name
-    TabButton.TextColor3 = Color3.fromRGB(200, 200, 200)
-    TabButton.TextScaled = true
+local function createTab(name, icon, color)
+    -- Navigation button
+    local NavButton = Instance.new("TextButton")
+    NavButton.Name = name .. "NavButton"
+    NavButton.Parent = NavigationFrame
+    NavButton.BackgroundColor3 = color or Color3.fromRGB(50, 50, 80)
+    NavButton.BackgroundTransparency = 0.3
+    NavButton.BorderSizePixel = 0
+    NavButton.Size = UDim2.new(1, 0, 0, 50)
+    NavButton.Font = Enum.Font.SourceSansBold
+    NavButton.Text = icon .. "  " .. name
+    NavButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    NavButton.TextScaled = true
+    NavButton.TextXAlignment = Enum.TextXAlignment.Left
+    NavButton.LayoutOrder = #NavigationFrame:GetChildren()
     
-    local TabCorner = Instance.new("UICorner")
-    TabCorner.CornerRadius = UDim.new(0, 8)
-    TabCorner.Parent = TabButton
+    local NavButtonCorner = Instance.new("UICorner")
+    NavButtonCorner.CornerRadius = UDim.new(0, 10)
+    NavButtonCorner.Parent = NavButton
     
+    local NavButtonStroke = Instance.new("UIStroke")
+    NavButtonStroke.Color = color or Color3.fromRGB(100, 100, 200)
+    NavButtonStroke.Thickness = 1
+    NavButtonStroke.Transparency = 0.7
+    NavButtonStroke.Parent = NavButton
+    
+    -- Content page
     local TabPage = Instance.new("ScrollingFrame")
     TabPage.Name = name .. "Page"
     TabPage.Parent = PagesContainer
-    TabPage.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    TabPage.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+    TabPage.BackgroundTransparency = 0.5
     TabPage.BorderSizePixel = 0
     TabPage.Size = UDim2.new(1, 0, 1, 0)
     TabPage.Visible = false
     TabPage.ScrollBarThickness = 8
-    TabPage.ScrollBarImageColor3 = Color3.fromRGB(60, 120, 255)
+    TabPage.ScrollBarImageColor3 = color or Color3.fromRGB(0, 200, 255)
+    TabPage.CanvasSize = UDim2.new(0, 0, 0, 0)
+    TabPage.AutomaticCanvasSize = Enum.AutomaticSize.Y
     
     local PageCorner = Instance.new("UICorner")
-    PageCorner.CornerRadius = UDim.new(0, 8)
+    PageCorner.CornerRadius = UDim.new(0, 15)
     PageCorner.Parent = TabPage
+    
+    local PageStroke = Instance.new("UIStroke")
+    PageStroke.Color = color or Color3.fromRGB(0, 255, 150)
+    PageStroke.Thickness = 1
+    PageStroke.Transparency = 0.7
+    PageStroke.Parent = TabPage
     
     local PageLayout = Instance.new("UIListLayout")
     PageLayout.Parent = TabPage
-    PageLayout.Padding = UDim.new(0, 5)
+    PageLayout.Padding = UDim.new(0, 10)
     PageLayout.SortOrder = Enum.SortOrder.LayoutOrder
     
     local PagePadding = Instance.new("UIPadding")
     PagePadding.Parent = TabPage
-    PagePadding.PaddingTop = UDim.new(0, 10)
-    PagePadding.PaddingLeft = UDim.new(0, 10)
-    PagePadding.PaddingRight = UDim.new(0, 10)
-    PagePadding.PaddingBottom = UDim.new(0, 10)
+    PagePadding.PaddingTop = UDim.new(0, 20)
+    PagePadding.PaddingLeft = UDim.new(0, 20)
+    PagePadding.PaddingRight = UDim.new(0, 20)
+    PagePadding.PaddingBottom = UDim.new(0, 20)
     
-    tabs[name] = {button = TabButton, page = TabPage}
+    tabs[name] = {button = NavButton, page = TabPage, color = color}
     
-    TabButton.MouseButton1Click:Connect(function()
+    -- Tab switching with animations
+    NavButton.MouseButton1Click:Connect(function()
         for tabName, tab in pairs(tabs) do
             tab.page.Visible = false
-            tab.button.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+            tab.button.BackgroundTransparency = 0.3
             tab.button.TextColor3 = Color3.fromRGB(200, 200, 200)
         end
         
         TabPage.Visible = true
-        TabButton.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-        TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+        NavButton.BackgroundTransparency = 0.1
+        NavButton.TextColor3 = Color3.fromRGB(255, 255, 255)
         currentTab = name
         
-        -- Animate tab selection
-        local tween = TweenService:Create(TabButton, 
-            TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-            {BackgroundColor3 = Color3.fromRGB(60, 120, 255)}
+        -- Selection animation
+        local tween = TweenService:Create(NavButton,
+            TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out),
+            {BackgroundTransparency = 0.1}
         )
         tween:Play()
+    end)
+    
+    -- Hover effects
+    NavButton.MouseEnter:Connect(function()
+        if currentTab ~= name then
+            local tween = TweenService:Create(NavButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+                {BackgroundTransparency = 0.2}
+            )
+            tween:Play()
+        end
+    end)
+    
+    NavButton.MouseLeave:Connect(function()
+        if currentTab ~= name then
+            local tween = TweenService:Create(NavButton,
+                TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+                {BackgroundTransparency = 0.3}
+            )
+            tween:Play()
+        end
     end)
     
     return TabPage
 end
 
--- Create button helper
-local function createButton(parent, text, layoutOrder, callback)
+-- Enhanced button creation with futuristic styling
+local function createButton(parent, text, layoutOrder, callback, color)
+    local buttonColor = color or Color3.fromRGB(0, 150, 255)
+    
     local Button = Instance.new("TextButton")
     Button.Parent = parent
-    Button.BackgroundColor3 = Color3.fromRGB(50, 100, 200)
+    Button.BackgroundColor3 = buttonColor
+    Button.BackgroundTransparency = 0.2
     Button.BorderSizePixel = 0
-    Button.Size = UDim2.new(1, 0, 0, 35)
-    Button.Font = Enum.Font.Gotham
+    Button.Size = UDim2.new(1, 0, 0, 50)
+    Button.Font = Enum.Font.SourceSansBold
     Button.Text = text
     Button.TextColor3 = Color3.fromRGB(255, 255, 255)
     Button.TextScaled = true
     Button.LayoutOrder = layoutOrder
     
     local ButtonCorner = Instance.new("UICorner")
-    ButtonCorner.CornerRadius = UDim.new(0, 6)
+    ButtonCorner.CornerRadius = UDim.new(0, 12)
     ButtonCorner.Parent = Button
     
-    -- Hover effect
+    local ButtonStroke = Instance.new("UIStroke")
+    ButtonStroke.Color = buttonColor
+    ButtonStroke.Thickness = 2
+    ButtonStroke.Transparency = 0.3
+    ButtonStroke.Parent = Button
+    
+    local ButtonGradient = Instance.new("UIGradient")
+    ButtonGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, buttonColor),
+        ColorSequenceKeypoint.new(1, Color3.new(
+            math.min(buttonColor.R + 0.2, 1),
+            math.min(buttonColor.G + 0.2, 1), 
+            math.min(buttonColor.B + 0.2, 1)
+        ))
+    }
+    ButtonGradient.Rotation = 90
+    ButtonGradient.Parent = Button
+    
+    -- Enhanced hover effects
     Button.MouseEnter:Connect(function()
-        local tween = TweenService:Create(Button,
+        local tween1 = TweenService:Create(Button,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad),
-            {BackgroundColor3 = Color3.fromRGB(70, 120, 220)}
+            {BackgroundTransparency = 0.1}
         )
-        tween:Play()
+        local tween2 = TweenService:Create(ButtonStroke,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+            {Transparency = 0.1}
+        )
+        tween1:Play()
+        tween2:Play()
     end)
     
     Button.MouseLeave:Connect(function()
-        local tween = TweenService:Create(Button,
+        local tween1 = TweenService:Create(Button,
             TweenInfo.new(0.2, Enum.EasingStyle.Quad),
-            {BackgroundColor3 = Color3.fromRGB(50, 100, 200)}
+            {BackgroundTransparency = 0.2}
         )
-        tween:Play()
+        local tween2 = TweenService:Create(ButtonStroke,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+            {Transparency = 0.3}
+        )
+        tween1:Play()
+        tween2:Play()
     end)
     
-    if callback then
-        Button.MouseButton1Click:Connect(callback)
-    end
+    -- Click animation
+    Button.MouseButton1Click:Connect(function()
+        local tween = TweenService:Create(Button,
+            TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+            {Size = UDim2.new(1, -4, 0, 46)}
+        )
+        tween:Play()
+        tween.Completed:Connect(function()
+            local tween2 = TweenService:Create(Button,
+                TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut),
+                {Size = UDim2.new(1, 0, 0, 50)}
+            )
+            tween2:Play()
+        end)
+        
+        if callback then
+            callback()
+        end
+    end)
     
     return Button
 end
 
--- Create input field helper
-local function createInputField(parent, placeholder, layoutOrder)
+-- Enhanced input field creation
+local function createInputField(parent, placeholder, layoutOrder, color)
+    local inputColor = color or Color3.fromRGB(50, 50, 100)
+    
     local InputFrame = Instance.new("Frame")
     InputFrame.Parent = parent
-    InputFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+    InputFrame.BackgroundColor3 = inputColor
+    InputFrame.BackgroundTransparency = 0.3
     InputFrame.BorderSizePixel = 0
-    InputFrame.Size = UDim2.new(1, 0, 0, 35)
+    InputFrame.Size = UDim2.new(1, 0, 0, 50)
     InputFrame.LayoutOrder = layoutOrder
     
     local InputCorner = Instance.new("UICorner")
-    InputCorner.CornerRadius = UDim.new(0, 6)
+    InputCorner.CornerRadius = UDim.new(0, 12)
     InputCorner.Parent = InputFrame
+    
+    local InputStroke = Instance.new("UIStroke")
+    InputStroke.Color = Color3.fromRGB(0, 200, 255)
+    InputStroke.Thickness = 2
+    InputStroke.Transparency = 0.5
+    InputStroke.Parent = InputFrame
     
     local InputBox = Instance.new("TextBox")
     InputBox.Parent = InputFrame
     InputBox.BackgroundTransparency = 1
-    InputBox.Position = UDim2.new(0, 10, 0, 0)
-    InputBox.Size = UDim2.new(1, -20, 1, 0)
-    InputBox.Font = Enum.Font.Gotham
+    InputBox.Position = UDim2.new(0, 15, 0, 0)
+    InputBox.Size = UDim2.new(1, -30, 1, 0)
+    InputBox.Font = Enum.Font.SourceSans
     InputBox.PlaceholderText = placeholder
-    InputBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 150)
+    InputBox.PlaceholderColor3 = Color3.fromRGB(150, 150, 200)
     InputBox.Text = ""
     InputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     InputBox.TextScaled = true
     InputBox.TextXAlignment = Enum.TextXAlignment.Left
     
+    -- Focus effects
+    InputBox.Focused:Connect(function()
+        local tween = TweenService:Create(InputStroke,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+            {Transparency = 0.2}
+        )
+        tween:Play()
+    end)
+    
+    InputBox.FocusLost:Connect(function()
+        local tween = TweenService:Create(InputStroke,
+            TweenInfo.new(0.2, Enum.EasingStyle.Quad),
+            {Transparency = 0.5}
+        )
+        tween:Play()
+    end)
+    
     return InputBox
 end
 
--- Player Management Functions
+-- Enhanced Player Management Functions with better visibility
 local bannedPlayers = {}
 
 local function getPlayerFromInput(input)
@@ -322,52 +542,40 @@ local function getPlayerFromInput(input)
     return targetPlayer
 end
 
-local function kickPlayer(playerName)
-    local targetPlayer = getPlayerFromInput(playerName)
-    if targetPlayer then
-        targetPlayer:Kick("🔨 You have been kicked by an administrator")
-        return true, targetPlayer.Name
+-- Enhanced Remote Event System
+local function setupRemoteEvents()
+    -- Wait for or create AdminRemotes folder
+    local AdminFolder = ReplicatedStorage:FindFirstChild("AdminRemotes")
+    if not AdminFolder then
+        AdminFolder = Instance.new("Folder")
+        AdminFolder.Name = "AdminRemotes"
+        AdminFolder.Parent = ReplicatedStorage
     end
-    return false, "Player not found"
-end
-
-local function banPlayer(playerName)
-    local targetPlayer = getPlayerFromInput(playerName)
-    if targetPlayer then
-        bannedPlayers[targetPlayer.UserId] = {
-            name = targetPlayer.Name,
-            reason = "Banned by administrator",
-            timestamp = os.time()
-        }
-        targetPlayer:Kick("🚫 You have been banned from this server")
-        return true, targetPlayer.Name
-    end
-    return false, "Player not found"
-end
-
-local function teleportToPlayer(playerName)
-    local targetPlayer = getPlayerFromInput(playerName)
-    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            LocalPlayer.Character.HumanoidRootPart.CFrame = targetPlayer.Character.HumanoidRootPart.CFrame
-            return true, targetPlayer.Name
+    
+    -- Create remote events if they don't exist
+    local remoteNames = {
+        "KickPlayer", "BanPlayer", "TeleportPlayer", "ServerMessage",
+        "DancePartyEvent", "FireworksEvent", "LightningEvent", 
+        "MeteorEvent", "SnowEvent", "DiscoEvent", "GlobalMusic"
+    }
+    
+    local remotes = {}
+    for _, remoteName in pairs(remoteNames) do
+        local remote = AdminFolder:FindFirstChild(remoteName)
+        if not remote then
+            remote = Instance.new("RemoteEvent")
+            remote.Name = remoteName
+            remote.Parent = AdminFolder
         end
+        remotes[remoteName] = remote
     end
-    return false, "Unable to teleport"
+    
+    return remotes
 end
 
-local function teleportPlayerToMe(playerName)
-    local targetPlayer = getPlayerFromInput(playerName)
-    if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-            targetPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame
-            return true, targetPlayer.Name
-        end
-    end
-    return false, "Unable to teleport player"
-end
+local remoteEvents = setupRemoteEvents()
 
--- Live Events System
+-- Enhanced Event Functions with Global Visibility
 local activeEvents = {}
 local eventMusic = nil
 
@@ -376,177 +584,377 @@ local function startDanceParty()
     
     activeEvents.danceParty = true
     
-    -- Play party music
-    if eventMusic then
-        eventMusic:Stop()
-        eventMusic:Destroy()
+    -- Fire remote event to make ALL players dance (including non-admins)
+    if remoteEvents.DancePartyEvent then
+        remoteEvents.DancePartyEvent:FireServer("start")
     end
     
-    eventMusic = Instance.new("Sound")
-    eventMusic.Name = "PartyMusic"
-    eventMusic.SoundId = MUSIC_IDS["Dance Party"]
-    eventMusic.Volume = 0.5
-    eventMusic.Looped = true
-    eventMusic.Parent = Workspace
-    eventMusic:Play()
-    
-    -- Make all players dance
-    for _, player in pairs(Players:GetPlayers()) do
-        if player.Character and player.Character:FindFirstChild("Humanoid") then
-            local humanoid = player.Character.Humanoid
-            local animator = humanoid:FindFirstChild("Animator")
-            if animator then
-                local danceId = DANCE_ANIMATIONS[math.random(1, #DANCE_ANIMATIONS)]
-                local animation = Instance.new("Animation")
-                animation.AnimationId = danceId
-                local track = animator:LoadAnimation(animation)
-                track.Looped = true
-                track:Play()
-                
-                -- Store track for cleanup
-                if not activeEvents.danceTracks then
-                    activeEvents.danceTracks = {}
-                end
-                table.insert(activeEvents.danceTracks, track)
-            end
-        end
+    -- Play party music for everyone
+    if remoteEvents.GlobalMusic then
+        remoteEvents.GlobalMusic:FireServer(MUSIC_IDS["Dance Party"], "Dance Party")
     end
     
-    -- Party lighting effects
+    -- Visual effects
     spawn(function()
-        local originalBrightness = Lighting.Brightness
-        local originalAmbient = Lighting.Ambient
-        
         while activeEvents.danceParty do
-            Lighting.Brightness = math.random(50, 100) / 100
-            Lighting.Ambient = Color3.fromHSV(math.random(), 1, 1)
+            -- Create disco ball effect
+            local effect = Instance.new("Explosion")
+            effect.Position = Vector3.new(
+                math.random(-50, 50),
+                math.random(20, 40),
+                math.random(-50, 50)
+            )
+            effect.BlastRadius = 0
+            effect.BlastPressure = 0
+            effect.Visible = false
+            effect.Parent = Workspace
+            
             wait(0.5)
         end
-        
-        Lighting.Brightness = originalBrightness
-        Lighting.Ambient = originalAmbient
     end)
 end
 
 local function stopDanceParty()
     activeEvents.danceParty = false
     
-    if eventMusic then
-        eventMusic:Stop()
-        eventMusic:Destroy()
-        eventMusic = nil
+    if remoteEvents.DancePartyEvent then
+        remoteEvents.DancePartyEvent:FireServer("stop")
     end
     
-    if activeEvents.danceTracks then
-        for _, track in pairs(activeEvents.danceTracks) do
-            track:Stop()
-        end
-        activeEvents.danceTracks = {}
+    if remoteEvents.GlobalMusic then
+        remoteEvents.GlobalMusic:FireServer("", "stop")
     end
 end
 
-local function startRainEvent()
-    if activeEvents.rain then return end
+local function startFireworksEvent()
+    if activeEvents.fireworks then return end
     
-    activeEvents.rain = true
+    activeEvents.fireworks = true
     
-    -- Create rain effect
-    local rainPart = Instance.new("Part")
-    rainPart.Name = "RainCloud"
-    rainPart.Size = Vector3.new(200, 1, 200)
-    rainPart.Position = Vector3.new(0, 100, 0)
-    rainPart.Anchored = true
-    rainPart.CanCollide = false
-    rainPart.Transparency = 1
-    rainPart.Parent = Workspace
+    if remoteEvents.FireworksEvent then
+        remoteEvents.FireworksEvent:FireServer("start")
+    end
     
-    local rainAttachment = Instance.new("Attachment")
-    rainAttachment.Parent = rainPart
+    spawn(function()
+        while activeEvents.fireworks do
+            -- Create firework explosions
+            for i = 1, 3 do
+                local firework = Instance.new("Explosion")
+                firework.Position = Vector3.new(
+                    math.random(-100, 100),
+                    math.random(50, 100),
+                    math.random(-100, 100)
+                )
+                firework.BlastRadius = 20
+                firework.BlastPressure = 0
+                firework.Parent = Workspace
+                
+                wait(0.2)
+            end
+            wait(1)
+        end
+    end)
+end
+
+local function stopFireworksEvent()
+    activeEvents.fireworks = false
     
-    local rainEffect = Instance.new("ParticleEmitter")
-    rainEffect.Parent = rainAttachment
-    rainEffect.Texture = "rbxasset://textures/particles/sparkles_main.dds"
-    rainEffect.Color = ColorSequence.new(Color3.fromRGB(100, 150, 255))
-    rainEffect.Size = NumberSequence.new{
-        NumberSequenceKeypoint.new(0, 0.1),
+    if remoteEvents.FireworksEvent then
+        remoteEvents.FireworksEvent:FireServer("stop")
+    end
+end
+
+local function startLightningEvent()
+    if activeEvents.lightning then return end
+    
+    activeEvents.lightning = true
+    
+    if remoteEvents.LightningEvent then
+        remoteEvents.LightningEvent:FireServer("start")
+    end
+    
+    spawn(function()
+        local originalAmbient = Lighting.Ambient
+        local originalBrightness = Lighting.Brightness
+        
+        while activeEvents.lightning do
+            -- Lightning flash
+            Lighting.Ambient = Color3.fromRGB(200, 200, 255)
+            Lighting.Brightness = 2
+            
+            -- Thunder sound
+            local thunder = Instance.new("Sound")
+            thunder.SoundId = "rbxassetid://131961136"
+            thunder.Volume = 0.5
+            thunder.Parent = Workspace
+            thunder:Play()
+            
+            Debris:AddItem(thunder, 5)
+            
+            wait(0.1)
+            Lighting.Ambient = originalAmbient
+            Lighting.Brightness = originalBrightness
+            
+            wait(math.random(2, 8))
+        end
+        
+        Lighting.Ambient = originalAmbient
+        Lighting.Brightness = originalBrightness
+    end)
+end
+
+local function stopLightningEvent()
+    activeEvents.lightning = false
+    
+    if remoteEvents.LightningEvent then
+        remoteEvents.LightningEvent:FireServer("stop")
+    end
+end
+
+local function startMeteorEvent()
+    if activeEvents.meteor then return end
+    
+    activeEvents.meteor = true
+    
+    if remoteEvents.MeteorEvent then
+        remoteEvents.MeteorEvent:FireServer("start")
+    end
+    
+    spawn(function()
+        while activeEvents.meteor do
+            -- Create meteor
+            local meteor = Instance.new("Part")
+            meteor.Name = "Meteor"
+            meteor.Size = Vector3.new(4, 4, 4)
+            meteor.Material = Enum.Material.Neon
+            meteor.BrickColor = BrickColor.new("Bright orange")
+            meteor.Shape = Enum.PartType.Ball
+            meteor.TopSurface = Enum.SurfaceType.Smooth
+            meteor.BottomSurface = Enum.SurfaceType.Smooth
+            meteor.CanCollide = false
+            meteor.Position = Vector3.new(
+                math.random(-200, 200),
+                200,
+                math.random(-200, 200)
+            )
+            meteor.Parent = Workspace
+            
+            -- Add fire effect
+            local fire = Instance.new("Fire")
+            fire.Size = 10
+            fire.Heat = 15
+            fire.Parent = meteor
+            
+            -- Add velocity
+            local bodyVelocity = Instance.new("BodyVelocity")
+            bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+            bodyVelocity.Velocity = Vector3.new(
+                math.random(-50, 50),
+                -100,
+                math.random(-50, 50)
+            )
+            bodyVelocity.Parent = meteor
+            
+            -- Destroy on impact
+            meteor.Touched:Connect(function(hit)
+                if hit.Name == "Baseplate" or hit.Parent:FindFirstChild("Humanoid") then
+                    local explosion = Instance.new("Explosion")
+                    explosion.Position = meteor.Position
+                    explosion.BlastRadius = 25
+                    explosion.BlastPressure = 500000
+                    explosion.Parent = Workspace
+                    
+                    meteor:Destroy()
+                end
+            end)
+            
+            Debris:AddItem(meteor, 10)
+            wait(2)
+        end
+    end)
+end
+
+local function stopMeteorEvent()
+    activeEvents.meteor = false
+    
+    if remoteEvents.MeteorEvent then
+        remoteEvents.MeteorEvent:FireServer("stop")
+    end
+    
+    -- Clean up existing meteors
+    for _, obj in pairs(Workspace:GetChildren()) do
+        if obj.Name == "Meteor" then
+            obj:Destroy()
+        end
+    end
+end
+
+local function startSnowEvent()
+    if activeEvents.snow then return end
+    
+    activeEvents.snow = true
+    
+    if remoteEvents.SnowEvent then
+        remoteEvents.SnowEvent:FireServer("start")
+    end
+    
+    -- Create snow effect for all players
+    local snowPart = Instance.new("Part")
+    snowPart.Name = "SnowCloud"
+    snowPart.Size = Vector3.new(500, 1, 500)
+    snowPart.Position = Vector3.new(0, 200, 0)
+    snowPart.Anchored = true
+    snowPart.CanCollide = false
+    snowPart.Transparency = 1
+    snowPart.Parent = Workspace
+    
+    local snowAttachment = Instance.new("Attachment")
+    snowAttachment.Parent = snowPart
+    
+    local snowEffect = Instance.new("ParticleEmitter")
+    snowEffect.Parent = snowAttachment
+    snowEffect.Texture = "rbxasset://textures/particles/snow_main_01.dds"
+    snowEffect.Color = ColorSequence.new(Color3.fromRGB(255, 255, 255))
+    snowEffect.Size = NumberSequence.new{
+        NumberSequenceKeypoint.new(0, 0.2),
         NumberSequenceKeypoint.new(1, 0.1)
     }
-    rainEffect.Lifetime = NumberRange.new(3, 5)
-    rainEffect.Rate = 500
-    rainEffect.SpreadAngle = Vector2.new(0, 0)
-    rainEffect.Speed = NumberRange.new(20, 30)
-    rainEffect.Acceleration = Vector3.new(0, -50, 0)
+    snowEffect.Lifetime = NumberRange.new(8, 12)
+    snowEffect.Rate = 1000
+    snowEffect.SpreadAngle = Vector2.new(45, 45)
+    snowEffect.Speed = NumberRange.new(5, 15)
+    snowEffect.Acceleration = Vector3.new(0, -10, 0)
     
-    activeEvents.rainPart = rainPart
+    activeEvents.snowPart = snowPart
     
-    -- Change lighting for rain
-    local originalAmbient = Lighting.Ambient
-    Lighting.Ambient = Color3.fromRGB(50, 50, 80)
-    activeEvents.originalAmbient = originalAmbient
+    -- Change lighting for winter
+    Lighting.Ambient = Color3.fromRGB(150, 150, 200)
+    Lighting.ColorShift_Top = Color3.fromRGB(200, 200, 255)
 end
 
-local function stopRainEvent()
-    activeEvents.rain = false
+local function stopSnowEvent()
+    activeEvents.snow = false
     
-    if activeEvents.rainPart then
-        activeEvents.rainPart:Destroy()
-        activeEvents.rainPart = nil
+    if remoteEvents.SnowEvent then
+        remoteEvents.SnowEvent:FireServer("stop")
     end
     
-    if activeEvents.originalAmbient then
-        Lighting.Ambient = activeEvents.originalAmbient
-        activeEvents.originalAmbient = nil
+    if activeEvents.snowPart then
+        activeEvents.snowPart:Destroy()
+        activeEvents.snowPart = nil
+    end
+    
+    -- Reset lighting
+    Lighting.Ambient = Color3.fromRGB(127, 127, 127)
+    Lighting.ColorShift_Top = Color3.fromRGB(0, 0, 0)
+end
+
+local function startDiscoEvent()
+    if activeEvents.disco then return end
+    
+    activeEvents.disco = true
+    
+    if remoteEvents.DiscoEvent then
+        remoteEvents.DiscoEvent:FireServer("start")
+    end
+    
+    spawn(function()
+        while activeEvents.disco do
+            -- Disco lighting
+            Lighting.Ambient = Color3.fromHSV(math.random(), 1, 1)
+            Lighting.ColorShift_Top = Color3.fromHSV(math.random(), 1, 1)
+            Lighting.ColorShift_Bottom = Color3.fromHSV(math.random(), 1, 1)
+            
+            wait(0.2)
+        end
+        
+        -- Reset lighting
+        Lighting.Ambient = Color3.fromRGB(127, 127, 127)
+        Lighting.ColorShift_Top = Color3.fromRGB(0, 0, 0)
+        Lighting.ColorShift_Bottom = Color3.fromRGB(0, 0, 0)
+    end)
+end
+
+local function stopDiscoEvent()
+    activeEvents.disco = false
+    
+    if remoteEvents.DiscoEvent then
+        remoteEvents.DiscoEvent:FireServer("stop")
     end
 end
 
--- Create tabs
-local PlayerTab = createTab("Players", "👤")
-local EventsTab = createTab("Events", "🎉")
-local MusicTab = createTab("Music", "🎵")
-local ServerTab = createTab("Server", "⚙️")
+-- Enhanced music system
+local currentMusic = nil
+
+local function playMusic(musicId, name)
+    if remoteEvents.GlobalMusic then
+        remoteEvents.GlobalMusic:FireServer(musicId, name)
+    end
+end
+
+local function stopMusic()
+    if remoteEvents.GlobalMusic then
+        remoteEvents.GlobalMusic:FireServer("", "stop")
+    end
+end
+
+-- Create enhanced tabs with new events
+local PlayerTab = createTab("Players", "👤", Color3.fromRGB(0, 150, 255))
+local EventsTab = createTab("Events", "🎉", Color3.fromRGB(255, 100, 0))
+local MusicTab = createTab("Music", "🎵", Color3.fromRGB(150, 0, 255))
+local ServerTab = createTab("Server", "⚙️", Color3.fromRGB(0, 255, 100))
+local WeatherTab = createTab("Weather", "🌤️", Color3.fromRGB(100, 200, 255))
 
 -- PLAYERS TAB CONTENT
-local PlayerInputField = createInputField(PlayerTab, "Enter player name...", 1)
+local PlayerInputField = createInputField(PlayerTab, "Enter player name...", 1, Color3.fromRGB(0, 100, 200))
 
 createButton(PlayerTab, "🔥 Kick Player", 2, function()
     local playerName = PlayerInputField.Text
     if playerName ~= "" then
-        local success, result = kickPlayer(playerName)
-        PlayerInputField.Text = success and ("✅ Kicked " .. result) or ("❌ " .. result)
-        wait(2)
-        PlayerInputField.Text = ""
+        if remoteEvents.KickPlayer then
+            remoteEvents.KickPlayer:FireServer(playerName)
+            PlayerInputField.Text = "✅ Kick request sent"
+            wait(2)
+            PlayerInputField.Text = ""
+        end
     end
-end)
+end, Color3.fromRGB(255, 50, 50))
 
 createButton(PlayerTab, "🚫 Ban Player", 3, function()
     local playerName = PlayerInputField.Text
     if playerName ~= "" then
-        local success, result = banPlayer(playerName)
-        PlayerInputField.Text = success and ("✅ Banned " .. result) or ("❌ " .. result)
-        wait(2)
-        PlayerInputField.Text = ""
+        if remoteEvents.BanPlayer then
+            remoteEvents.BanPlayer:FireServer(playerName)
+            PlayerInputField.Text = "✅ Ban request sent"
+            wait(2)
+            PlayerInputField.Text = ""
+        end
     end
-end)
+end, Color3.fromRGB(255, 0, 0))
 
 createButton(PlayerTab, "📍 Teleport To Player", 4, function()
     local playerName = PlayerInputField.Text
     if playerName ~= "" then
-        local success, result = teleportToPlayer(playerName)
-        PlayerInputField.Text = success and ("✅ Teleported to " .. result) or ("❌ " .. result)
-        wait(2)
-        PlayerInputField.Text = ""
+        if remoteEvents.TeleportPlayer then
+            remoteEvents.TeleportPlayer:FireServer("to", playerName)
+            PlayerInputField.Text = "✅ Teleport request sent"
+            wait(2)
+            PlayerInputField.Text = ""
+        end
     end
-end)
+end, Color3.fromRGB(0, 255, 150))
 
 createButton(PlayerTab, "📍 Bring Player", 5, function()
     local playerName = PlayerInputField.Text
     if playerName ~= "" then
-        local success, result = teleportPlayerToMe(playerName)
-        PlayerInputField.Text = success and ("✅ Brought " .. result) or ("❌ " .. result)
-        wait(2)
-        PlayerInputField.Text = ""
+        if remoteEvents.TeleportPlayer then
+            remoteEvents.TeleportPlayer:FireServer("bring", playerName)
+            PlayerInputField.Text = "✅ Bring request sent"
+            wait(2)
+            PlayerInputField.Text = ""
+        end
     end
-end)
+end, Color3.fromRGB(0, 255, 200))
 
 createButton(PlayerTab, "👥 List Online Players", 6, function()
     local playerList = {}
@@ -556,82 +964,68 @@ createButton(PlayerTab, "👥 List Online Players", 6, function()
     PlayerInputField.Text = table.concat(playerList, ", ")
     wait(5)
     PlayerInputField.Text = ""
-end)
+end, Color3.fromRGB(100, 150, 255))
 
--- EVENTS TAB CONTENT
-createButton(EventsTab, "🕺 Start Dance Party", 1, function()
-    startDanceParty()
-end)
+-- ENHANCED EVENTS TAB CONTENT
+createButton(EventsTab, "🕺 Start Dance Party", 1, startDanceParty, Color3.fromRGB(255, 100, 255))
+createButton(EventsTab, "⏹️ Stop Dance Party", 2, stopDanceParty, Color3.fromRGB(255, 50, 50))
 
-createButton(EventsTab, "⏹️ Stop Dance Party", 2, function()
-    stopDanceParty()
-end)
+createButton(EventsTab, "🎆 Start Fireworks", 3, startFireworksEvent, Color3.fromRGB(255, 200, 0))
+createButton(EventsTab, "⏹️ Stop Fireworks", 4, stopFireworksEvent, Color3.fromRGB(255, 50, 50))
 
-createButton(EventsTab, "🌧️ Start Rain Event", 3, function()
-    startRainEvent()
-end)
+createButton(EventsTab, "⚡ Start Lightning Storm", 5, startLightningEvent, Color3.fromRGB(255, 255, 0))
+createButton(EventsTab, "⏹️ Stop Lightning", 6, stopLightningEvent, Color3.fromRGB(255, 50, 50))
 
-createButton(EventsTab, "☀️ Stop Rain Event", 4, function()
-    stopRainEvent()
-end)
+createButton(EventsTab, "☄️ Start Meteor Shower", 7, startMeteorEvent, Color3.fromRGB(255, 100, 0))
+createButton(EventsTab, "⏹️ Stop Meteors", 8, stopMeteorEvent, Color3.fromRGB(255, 50, 50))
 
-createButton(EventsTab, "🌙 Night Mode", 5, function()
+createButton(EventsTab, "💃 Start Disco Mode", 9, startDiscoEvent, Color3.fromRGB(255, 0, 255))
+createButton(EventsTab, "⏹️ Stop Disco", 10, stopDiscoEvent, Color3.fromRGB(255, 50, 50))
+
+-- WEATHER TAB CONTENT
+createButton(WeatherTab, "❄️ Start Snow Event", 1, startSnowEvent, Color3.fromRGB(200, 200, 255))
+createButton(WeatherTab, "⏹️ Stop Snow", 2, stopSnowEvent, Color3.fromRGB(255, 50, 50))
+
+createButton(WeatherTab, "🌙 Night Mode", 3, function()
     Lighting.TimeOfDay = "00:00:00"
     Lighting.Ambient = Color3.fromRGB(50, 50, 100)
-end)
+    Lighting.ColorShift_Top = Color3.fromRGB(100, 100, 150)
+end, Color3.fromRGB(50, 50, 150))
 
-createButton(EventsTab, "☀️ Day Mode", 6, function()
+createButton(WeatherTab, "☀️ Day Mode", 4, function()
     Lighting.TimeOfDay = "12:00:00"
-    Lighting.Ambient = Color3.fromRGB(150, 150, 150)
-end)
+    Lighting.Ambient = Color3.fromRGB(127, 127, 127)
+    Lighting.ColorShift_Top = Color3.fromRGB(0, 0, 0)
+end, Color3.fromRGB(255, 255, 0))
 
-createButton(EventsTab, "🌈 Rainbow Sky", 7, function()
+createButton(WeatherTab, "🌅 Sunset Mode", 5, function()
+    Lighting.TimeOfDay = "18:00:00"
+    Lighting.Ambient = Color3.fromRGB(200, 100, 50)
+    Lighting.ColorShift_Top = Color3.fromRGB(255, 150, 100)
+end, Color3.fromRGB(255, 150, 50))
+
+createButton(WeatherTab, "🌈 Rainbow Sky", 6, function()
     spawn(function()
-        for i = 1, 50 do
-            Lighting.Ambient = Color3.fromHSV(i / 50, 1, 1)
+        for i = 1, 100 do
+            Lighting.Ambient = Color3.fromHSV(i / 100, 1, 1)
+            Lighting.ColorShift_Top = Color3.fromHSV((i + 50) / 100, 1, 1)
             wait(0.1)
         end
-        Lighting.Ambient = Color3.fromRGB(150, 150, 150)
+        Lighting.Ambient = Color3.fromRGB(127, 127, 127)
+        Lighting.ColorShift_Top = Color3.fromRGB(0, 0, 0)
     end)
-end)
+end, Color3.fromRGB(255, 200, 100))
 
--- MUSIC TAB CONTENT
-local currentMusic = nil
-
-local function playMusic(musicId, name)
-    if currentMusic then
-        currentMusic:Stop()
-        currentMusic:Destroy()
-    end
-    
-    currentMusic = Instance.new("Sound")
-    currentMusic.Name = "AdminMusic"
-    currentMusic.SoundId = musicId
-    currentMusic.Volume = 0.5
-    currentMusic.Looped = true
-    currentMusic.Parent = Workspace
-    currentMusic:Play()
-end
-
-local function stopMusic()
-    if currentMusic then
-        currentMusic:Stop()
-        currentMusic:Destroy()
-        currentMusic = nil
-    end
-end
-
+-- ENHANCED MUSIC TAB CONTENT
 for musicName, musicId in pairs(MUSIC_IDS) do
     createButton(MusicTab, "🎵 " .. musicName, #MusicTab:GetChildren(), function()
         playMusic(musicId, musicName)
-    end)
+    end, Color3.fromRGB(150, 0, 255))
 end
 
-createButton(MusicTab, "⏹️ Stop Music", #MusicTab:GetChildren() + 1, function()
-    stopMusic()
-end)
+createButton(MusicTab, "⏹️ Stop Music", #MusicTab:GetChildren() + 1, stopMusic, Color3.fromRGB(255, 50, 50))
 
-local CustomMusicInput = createInputField(MusicTab, "Enter music ID...", #MusicTab:GetChildren() + 2)
+local CustomMusicInput = createInputField(MusicTab, "Enter music ID...", #MusicTab:GetChildren() + 2, Color3.fromRGB(100, 0, 200))
 
 createButton(MusicTab, "🎶 Play Custom Music", #MusicTab:GetChildren() + 1, function()
     local musicId = CustomMusicInput.Text
@@ -644,128 +1038,125 @@ createButton(MusicTab, "🎶 Play Custom Music", #MusicTab:GetChildren() + 1, fu
         wait(2)
         CustomMusicInput.Text = ""
     end
-end)
+end, Color3.fromRGB(150, 0, 255))
 
 -- SERVER TAB CONTENT
 createButton(ServerTab, "🧹 Clear Workspace", 1, function()
     for _, obj in pairs(Workspace:GetChildren()) do
         if obj:IsA("Model") and obj ~= Workspace.CurrentCamera and not Players:GetPlayerFromCharacter(obj) then
             obj:Destroy()
-        elseif obj:IsA("Part") and obj.Name ~= "Baseplate" then
+        elseif obj:IsA("Part") and obj.Name ~= "Baseplate" and obj.Name ~= "SpawnLocation" then
             obj:Destroy()
         end
     end
-end)
+end, Color3.fromRGB(255, 150, 0))
 
 createButton(ServerTab, "💨 Low Gravity", 2, function()
     Workspace.Gravity = 50
-end)
+end, Color3.fromRGB(100, 255, 200))
 
 createButton(ServerTab, "🌍 Normal Gravity", 3, function()
     Workspace.Gravity = 196.2
-end)
+end, Color3.fromRGB(0, 255, 100))
 
 createButton(ServerTab, "🚀 High Gravity", 4, function()
     Workspace.Gravity = 500
-end)
+end, Color3.fromRGB(255, 100, 0))
 
 createButton(ServerTab, "🌫️ Add Fog", 5, function()
     Lighting.FogStart = 0
     Lighting.FogEnd = 100
     Lighting.FogColor = Color3.fromRGB(100, 100, 100)
-end)
+end, Color3.fromRGB(150, 150, 150))
 
 createButton(ServerTab, "🌞 Remove Fog", 6, function()
     Lighting.FogStart = 0
     Lighting.FogEnd = 100000
-end)
+end, Color3.fromRGB(255, 255, 0))
 
-local MessageInput = createInputField(ServerTab, "Enter server message...", 7)
+local MessageInput = createInputField(ServerTab, "Enter server message...", 7, Color3.fromRGB(0, 150, 100))
 
 createButton(ServerTab, "📢 Send Server Message", 8, function()
     local message = MessageInput.Text
     if message ~= "" then
-        for _, player in pairs(Players:GetPlayers()) do
-            if player ~= LocalPlayer then
-                local gui = Instance.new("ScreenGui")
-                gui.Parent = player:WaitForChild("PlayerGui")
-                
-                local frame = Instance.new("Frame")
-                frame.Parent = gui
-                frame.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
-                frame.BorderSizePixel = 0
-                frame.Position = UDim2.new(0.5, -200, 0, -50)
-                frame.Size = UDim2.new(0, 400, 0, 50)
-                
-                local corner = Instance.new("UICorner")
-                corner.CornerRadius = UDim.new(0, 8)
-                corner.Parent = frame
-                
-                local text = Instance.new("TextLabel")
-                text.Parent = frame
-                text.BackgroundTransparency = 1
-                text.Size = UDim2.new(1, 0, 1, 0)
-                text.Font = Enum.Font.GothamBold
-                text.Text = "📢 " .. message
-                text.TextColor3 = Color3.fromRGB(255, 255, 255)
-                text.TextScaled = true
-                
-                -- Animate message
-                local tween1 = TweenService:Create(frame,
-                    TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-                    {Position = UDim2.new(0.5, -200, 0, 20)}
-                )
-                tween1:Play()
-                
-                wait(3)
-                
-                local tween2 = TweenService:Create(frame,
-                    TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In),
-                    {Position = UDim2.new(0.5, -200, 0, -50)}
-                )
-                tween2:Play()
-                
-                tween2.Completed:Connect(function()
-                    gui:Destroy()
-                end)
-            end
+        if remoteEvents.ServerMessage then
+            remoteEvents.ServerMessage:FireServer(message)
+            MessageInput.Text = "✅ Message sent!"
+            wait(2)
+            MessageInput.Text = ""
         end
-        MessageInput.Text = "✅ Message sent!"
-        wait(2)
-        MessageInput.Text = ""
     end
-end)
+end, Color3.fromRGB(0, 255, 150))
 
 -- Set default tab
 tabs["Players"].page.Visible = true
-tabs["Players"].button.BackgroundColor3 = Color3.fromRGB(60, 120, 255)
+tabs["Players"].button.BackgroundTransparency = 0.1
 tabs["Players"].button.TextColor3 = Color3.fromRGB(255, 255, 255)
 currentTab = "Players"
 
--- Toggle functionality
+-- Enhanced toggle functionality with fullscreen
 local isOpen = false
 
 local function togglePanel()
     isOpen = not isOpen
     
     if isOpen then
-        MainFrame.Visible = true
-        MainFrame.Position = UDim2.new(0.5, -300, 1, 0)
+        BackgroundFrame.Visible = true
+        MainContainer.Position = UDim2.new(0.05, 0, 1, 0)
         
-        local tween = TweenService:Create(MainFrame,
+        -- Background fade in
+        local backgroundTween = TweenService:Create(BackgroundFrame,
+            TweenInfo.new(0.3, Enum.EasingStyle.Quad),
+            {BackgroundTransparency = 0.2}
+        )
+        backgroundTween:Play()
+        
+        -- Main container slide in
+        local containerTween = TweenService:Create(MainContainer,
             TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
-            {Position = UDim2.new(0.5, -300, 0.5, -250)}
+            {Position = UDim2.new(0.05, 0, 0.05, 0)}
         )
-        tween:Play()
-    else
-        local tween = TweenService:Create(MainFrame,
-            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In),
-            {Position = UDim2.new(0.5, -300, 1, 0)}
-        )
-        tween:Play()
+        containerTween:Play()
         
-        tween.Completed:Connect(function()
-            MainFrame.Visible = false
+        -- Title animation
+        spawn(function()
+            while isOpen do
+                local tween = TweenService:Create(TitleStroke,
+                    TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut),
+                    {Color = Color3.fromHSV(math.random(), 1, 1)}
+                )
+                tween:Play()
+                wait(2)
+            end
+        end)
+        
+        -- Background gradient animation
+        spawn(function()
+            local rotation = 0
+            while isOpen do
+                rotation = rotation + 1
+                BackgroundGradient.Rotation = rotation
+                wait(0.1)
+            end
+        end)
+        
+    else
+        -- Container slide out
+        local containerTween = TweenService:Create(MainContainer,
+            TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+            {Position = UDim2.new(0.05, 0, 1, 0)}
+        )
+        containerTween:Play()
+        
+        -- Background fade out
+        local backgroundTween = TweenService:Create(BackgroundFrame,
+            TweenInfo.new(0.5, Enum.EasingStyle.Quad),
+            {BackgroundTransparency = 1}
+        )
+        backgroundTween:Play()
+        
+        backgroundTween.Completed:Connect(function()
+            BackgroundFrame.Visible = false
         end)
     end
 end
@@ -784,30 +1175,28 @@ CloseButton.MouseButton1Click:Connect(function()
     togglePanel()
 end)
 
--- Handle banned players
-Players.PlayerAdded:Connect(function(player)
-    if bannedPlayers[player.UserId] then
-        player:Kick("🚫 You are banned from this server")
-    end
-end)
-
--- Dragging functionality
+-- Enhanced dragging functionality
 local dragging = false
 local dragStart = nil
 local startPos = nil
 
-TitleBar.InputBegan:Connect(function(input)
+HeaderFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         dragging = true
         dragStart = input.Position
-        startPos = MainFrame.Position
+        startPos = MainContainer.Position
     end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
     if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
         local delta = input.Position - dragStart
-        MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        MainContainer.Position = UDim2.new(
+            startPos.X.Scale, 
+            startPos.X.Offset + delta.X, 
+            startPos.Y.Scale, 
+            startPos.Y.Offset + delta.Y
+        )
     end
 end)
 
@@ -817,5 +1206,57 @@ UserInputService.InputEnded:Connect(function(input)
     end
 end)
 
-print("🛡️ Ultimate Admin Panel loaded! Press F2 to open.")
+-- Enhanced banned players handling
+Players.PlayerAdded:Connect(function(player)
+    if bannedPlayers[player.UserId] then
+        player:Kick("🚫 You are banned from this server")
+    end
+end)
+
+-- Success notification
+local function showNotification(message, color)
+    local notif = Instance.new("Frame")
+    notif.Parent = BackgroundFrame
+    notif.BackgroundColor3 = color or Color3.fromRGB(0, 255, 100)
+    notif.BackgroundTransparency = 0.3
+    notif.BorderSizePixel = 0
+    notif.Position = UDim2.new(1, 0, 0, 20)
+    notif.Size = UDim2.new(0, 300, 0, 60)
+    
+    local notifCorner = Instance.new("UICorner")
+    notifCorner.CornerRadius = UDim.new(0, 10)
+    notifCorner.Parent = notif
+    
+    local notifText = Instance.new("TextLabel")
+    notifText.Parent = notif
+    notifText.BackgroundTransparency = 1
+    notifText.Size = UDim2.new(1, -20, 1, 0)
+    notifText.Position = UDim2.new(0, 10, 0, 0)
+    notifText.Font = Enum.Font.SourceSansBold
+    notifText.Text = message
+    notifText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    notifText.TextScaled = true
+    
+    -- Animate notification
+    local slideIn = TweenService:Create(notif,
+        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.Out),
+        {Position = UDim2.new(1, -320, 0, 20)}
+    )
+    slideIn:Play()
+    
+    wait(3)
+    
+    local slideOut = TweenService:Create(notif,
+        TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In),
+        {Position = UDim2.new(1, 0, 0, 20)}
+    )
+    slideOut:Play()
+    
+    slideOut.Completed:Connect(function()
+        notif:Destroy()
+    end)
+end
+
+print("🌟 Ultimate Futuristic Admin Panel V2.0 loaded! Press F2 to open.")
 print("👑 Admin: " .. LocalPlayer.Name)
+print("✨ New features: Fullscreen GUI, Enhanced Events, Better Visibility!")
